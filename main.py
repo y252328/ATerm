@@ -8,7 +8,7 @@ import serial.tools.list_ports
 from PySide2.QtGui import QPixmap, QImage, QIcon
 from PySide2.QtWidgets import QApplication, QMainWindow, QFileDialog, QSizePolicy, QMenu, QMessageBox, QFileDialog
 from PySide2.QtCore import Slot, Qt, QPoint, Signal, QEvent, QTimer
-from layout import Ui_MainWindow    #MyFirstUI 是你的.py檔案名字
+from layout import Ui_MainWindow  
 
 
 class AppWindow(QMainWindow):
