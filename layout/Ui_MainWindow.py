@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'Ui_MainWindow.ui',
 # licensing of 'Ui_MainWindow.ui' applies.
 #
-# Created: Thu Dec 26 21:40:12 2019
+# Created: Fri Dec 27 23:26:55 2019
 #      by: pyside2-uic  running on PySide2 5.13.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -49,6 +49,10 @@ class Ui_MainWindow(object):
         self.horizontalLayout.addWidget(self.connectBtn)
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
+        self.autoScrollCheckBox = QtWidgets.QCheckBox(self.centralwidget)
+        self.autoScrollCheckBox.setChecked(True)
+        self.autoScrollCheckBox.setObjectName("autoScrollCheckBox")
+        self.horizontalLayout.addWidget(self.autoScrollCheckBox)
         self.sendFileBtn = QtWidgets.QPushButton(self.centralwidget)
         self.sendFileBtn.setEnabled(False)
         self.sendFileBtn.setObjectName("sendFileBtn")
@@ -67,6 +71,8 @@ class Ui_MainWindow(object):
         font.setFamily("Consolas")
         font.setPointSize(14)
         self.outputTextBrowser.setFont(font)
+        self.outputTextBrowser.setStyleSheet("background-color: rgb(30, 30, 30);\n"
+"color: rgb(236, 236, 236);")
         self.outputTextBrowser.setObjectName("outputTextBrowser")
         self.verticalLayout.addWidget(self.outputTextBrowser)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
@@ -108,6 +114,7 @@ class Ui_MainWindow(object):
         self.baudComboBox.setItemText(0, QtWidgets.QApplication.translate("MainWindow", "9600", None, -1))
         self.baudComboBox.setItemText(1, QtWidgets.QApplication.translate("MainWindow", "115200", None, -1))
         self.connectBtn.setText(QtWidgets.QApplication.translate("MainWindow", "Connect", None, -1))
+        self.autoScrollCheckBox.setText(QtWidgets.QApplication.translate("MainWindow", "Auto scroll", None, -1))
         self.sendFileBtn.setText(QtWidgets.QApplication.translate("MainWindow", "Send file", None, -1))
         self.clearOutputBtn.setText(QtWidgets.QApplication.translate("MainWindow", "Clear output", None, -1))
         self.sendBtn.setText(QtWidgets.QApplication.translate("MainWindow", "Send", None, -1))

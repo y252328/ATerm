@@ -21,6 +21,9 @@ class AppWindow(QMainWindow):
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.read_from_ser)
         self.on_refreshBtn_clicked()
+        scrollBar = self.ui.outputTextBrowser.verticalScrollBar()
+        scrollBar.setStyleSheet("background-color: rgb(240, 240, 240);\n"
+"color: rgb(12, 12, 12);")
 
     def closeEvent(self, event):
         if self.ser != None:
@@ -36,8 +39,9 @@ class AppWindow(QMainWindow):
     def append_term(self, text):
         text = self.ui.outputTextBrowser.toPlainText() + text
         self.ui.outputTextBrowser.setText(text)
-        scrollBar = self.ui.outputTextBrowser.verticalScrollBar()
-        scrollBar.setValue(scrollBar.maximum())
+        if self.ui.autoScrollCheckBox.isChecked():
+            scrollBar = self.ui.outputTextBrowser.verticalScrollBar()
+            scrollBar.setValue(scrollBar.maximum())
 
     def serial_in_waiting(self):
         if self.ser != None:
