@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'Ui_MainWindow.ui',
 # licensing of 'Ui_MainWindow.ui' applies.
 #
-# Created: Fri Dec 27 23:26:55 2019
+# Created: Fri Dec 27 23:46:54 2019
 #      by: pyside2-uic  running on PySide2 5.13.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -107,7 +107,7 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QtWidgets.QApplication.translate("MainWindow", "MainWindow", None, -1))
+        MainWindow.setWindowTitle(QtWidgets.QApplication.translate("MainWindow", "ATerm", None, -1))
         self.label.setText(QtWidgets.QApplication.translate("MainWindow", "Port:", None, -1))
         self.refreshBtn.setText(QtWidgets.QApplication.translate("MainWindow", "Refresh", None, -1))
         self.label_2.setText(QtWidgets.QApplication.translate("MainWindow", "Baud rate:", None, -1))
