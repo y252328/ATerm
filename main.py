@@ -125,7 +125,6 @@ class AppWindow(QMainWindow):
         text = self.ui.inputLineEdit.text() + eol
         self.serial_write(text.encode('ascii'))
         self.ui.inputLineEdit.setText('')
-        self.append_term(text)
 
     @Slot()
     def on_clearOutputBtn_clicked(self):
