@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'Ui_MainWindow.ui',
 # licensing of 'Ui_MainWindow.ui' applies.
 #
-# Created: Sat Dec 28 11:02:38 2019
+# Created: Thu Jan  2 19:56:33 2020
 #      by: pyside2-uic  running on PySide2 5.13.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -25,12 +25,13 @@ class Ui_MainWindow(object):
         self.label.setObjectName("label")
         self.horizontalLayout.addWidget(self.label)
         self.portComboBox = QtWidgets.QComboBox(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.portComboBox.sizePolicy().hasHeightForWidth())
         self.portComboBox.setSizePolicy(sizePolicy)
         self.portComboBox.setMinimumSize(QtCore.QSize(0, 0))
+        self.portComboBox.setSizeAdjustPolicy(QtWidgets.QComboBox.AdjustToContents)
         self.portComboBox.setObjectName("portComboBox")
         self.horizontalLayout.addWidget(self.portComboBox)
         self.refreshBtn = QtWidgets.QPushButton(self.centralwidget)

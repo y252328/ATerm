@@ -1,16 +1,19 @@
-
+import yaml
 import sys
 import os
 import time
-import serial
-import serial.tools.list_ports
-import serial.serialutil
+import serial, serial.tools.list_ports, serial.serialutil
 
 from PySide2.QtGui import QPixmap, QImage, QIcon
 from PySide2.QtWidgets import QApplication, QMainWindow, QFileDialog, QSizePolicy, QMenu, QMessageBox, QFileDialog
 from PySide2.QtCore import Slot, Qt, QPoint, Signal, QEvent, QTimer
 from layout import Ui_MainWindow  
 
+default_setting = """---
+priority: []
+
+baud: {}
+"""
 
 class AppWindow(QMainWindow):
     def __init__(self):
@@ -18,18 +21,31 @@ class AppWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.ser = None
+        self.load_setting()
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.read_from_ser)
-        self.on_refreshBtn_clicked()
         scrollBar = self.ui.outputTextBrowser.verticalScrollBar()
         scrollBar.setStyleSheet("background-color: rgb(240, 240, 240);\n"
 "color: rgb(12, 12, 12);")
+        self.on_refreshBtn_clicked()
 
     def closeEvent(self, event):
         if self.ser != None:
             self.ser.close()
         self.timer.stop()
+        self.save_setting()
         event.accept()
+
+    def load_setting(self):
+        self.setting = yaml.load(default_setting, Loader=yaml.SafeLoader)
+        if os.path.isfile('setting.yaml'):
+            with open('setting.yaml', 'r') as f:
+                setting = yaml.load(f, Loader=yaml.SafeLoader)
+            self.setting.update(setting)
+    
+    def save_setting(self):
+        with open('setting.yaml', 'w', encoding='utf-8') as f:
+            yaml.dump(self.setting, f, encoding='utf-8')
 
     def read_from_ser(self):
         if self.serial_in_waiting() > 0:
@@ -84,10 +100,26 @@ class AppWindow(QMainWindow):
     def on_refreshBtn_clicked(self):
         self.on_connectBtn_clicked(force_off=True)
         ports = serial.tools.list_ports.comports()
-        port = ['{} - {}'.format(device.device, device.description) for device in ports]
+        ports = ['{} - {}'.format(device.device, device.description) for device in ports]
         self.ui.portComboBox.clear()
-        self.ui.portComboBox.addItems(port)
+        self.ui.portComboBox.addItems(ports)
+        for target in self.setting['priority']:
+            for i, port in enumerate(ports):
+                if target.lower() in port.lower():
+                    self.ui.portComboBox.setCurrentIndex(i)
+                    return
+
         # self.ui.portComboBox.view().setMinimumWidth(100)
+    
+    @Slot(int)
+    def on_portComboBox_currentIndexChanged(self, index):
+        port_name = self.ui.portComboBox.itemText(index)
+        for k, v in self.setting['baud'].items():
+            if k.lower() in port_name.lower():
+                if v == 9600:
+                    self.ui.baudComboBox.setCurrentIndex(0)
+                elif v == 115200:
+                    self.ui.baudComboBox.setCurrentIndex(1)
 
     @Slot()
     def on_connectBtn_clicked(self, force_off=False):
@@ -101,6 +133,9 @@ class AppWindow(QMainWindow):
             self.ui.inputLineEdit.returnPressed.connect(self.on_sendBtn_clicked)
             self.ui.sendBtn.setEnabled(True)
             self.ui.sendFileBtn.setEnabled(True)
+            self.ui.portComboBox.setEnabled(False)
+            self.ui.baudComboBox.setEnabled(False)
+            self.ui.refreshBtn.setEnabled(False)
         else:
             self.timer.stop()
             if self.ser != None:
@@ -109,13 +144,23 @@ class AppWindow(QMainWindow):
             except: pass
             self.ui.sendBtn.setEnabled(False)
             self.ui.sendFileBtn.setEnabled(False)
+            self.ui.portComboBox.setEnabled(True)
+            self.ui.baudComboBox.setEnabled(True)
+            self.ui.refreshBtn.setEnabled(True)
             self.ser == None
             self.ui.connectBtn.setText('Connect')
 
     @Slot()
     def on_sendFileBtn_clicked(self):
-        fileName = QFileDialog.getOpenFileName(parent=self, caption="Choose file", dir=os.getcwd())
+        path = os.getcwd()
+        if 'path' in self.setting and os.path.exists(path):
+            if os.path.isfile(path):
+                path = os.path.dirname(self.setting['path'])
+            else:
+                path = self.setting['path']
+        fileName = QFileDialog.getOpenFileName(parent=self, caption="Choose file", dir=path)
         if os.path.isfile(fileName):
+            self.setting['path'] = os.path.dirname(fileName)
             with open(fileName[0], 'rb') as f:
                 self.serial_write(f.read(), 0)
             while self.serial_out_waiting() > 0:
