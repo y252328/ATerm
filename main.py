@@ -30,9 +30,7 @@ class AppWindow(QMainWindow):
         self.on_refreshBtn_clicked()
 
     def closeEvent(self, event):
-        if self.ser != None:
-            self.ser.close()
-        self.timer.stop()
+        self.on_connectBtn_clicked(force_off=True)
         self.save_setting()
         event.accept()
 
@@ -158,10 +156,10 @@ class AppWindow(QMainWindow):
                 path = os.path.dirname(self.setting['path'])
             else:
                 path = self.setting['path']
-        fileName = QFileDialog.getOpenFileName(parent=self, caption="Choose file", dir=path)
+        fileName = QFileDialog.getOpenFileName(parent=self, caption="Choose file", dir=path)[0]
         if os.path.isfile(fileName):
             self.setting['path'] = os.path.dirname(fileName)
-            with open(fileName[0], 'rb') as f:
+            with open(fileName, 'rb') as f:
                 self.serial_write(f.read(), 0)
             while self.serial_out_waiting() > 0:
                 print(self.serial_out_waiting())
