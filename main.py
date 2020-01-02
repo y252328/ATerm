@@ -105,7 +105,8 @@ class AppWindow(QMainWindow):
             self.timer.stop()
             if self.ser != None:
                 self.ser.close()
-            self.ui.inputLineEdit.returnPressed.disconnect()
+            try: self.ui.inputLineEdit.returnPressed.disconnect()
+            except: pass
             self.ui.sendBtn.setEnabled(False)
             self.ui.sendFileBtn.setEnabled(False)
             self.ser == None
