@@ -67,16 +67,22 @@ class AppWindow(QMainWindow):
                 self.on_connectBtn_clicked(True)
         return bytes()
 
-    def serial_write(self, data):
+    def serial_write(self, data, timeout=None):
         if self.ser != None:
             try:
-                return self.ser.write(data)
+                if timeout != None: 
+                    self.ser.write_timeout = timeout
+                n = self.ser.write(data)
+                if timeout != None: 
+                    self.ser.write_timeout = None
+                return n
             except serial.serialutil.SerialException:
-                self.on_connectBtn_clicked(True)
+                self.on_connectBtn_clicked(force_off=True)
         return 0
 
     @Slot()
     def on_refreshBtn_clicked(self):
+        self.on_connectBtn_clicked(force_off=True)
         ports = serial.tools.list_ports.comports()
         port = ['{} - {}'.format(device.device, device.description) for device in ports]
         self.ui.portComboBox.clear()
@@ -108,12 +114,12 @@ class AppWindow(QMainWindow):
     @Slot()
     def on_sendFileBtn_clicked(self):
         fileName = QFileDialog.getOpenFileName(parent=self, caption="Choose file", dir=os.getcwd())
-        print(fileName[0])
-        with open(fileName[0], 'rb') as f:
-            self.serial_write(f.read())
-        while self.serial_out_waiting() > 0:
-            print('wait')
-            time.sleep(0.1)
+        if os.path.isfile(fileName):
+            with open(fileName[0], 'rb') as f:
+                self.serial_write(f.read(), 0)
+            while self.serial_out_waiting() > 0:
+                print(self.serial_out_waiting())
+                time.sleep(0.2)
 
     @Slot()
     def on_sendBtn_clicked(self):
