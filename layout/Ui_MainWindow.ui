@@ -183,6 +183,11 @@ color: rgb(236, 236, 236);</string>
           <string>CR</string>
          </property>
         </item>
+        <item>
+         <property name="text">
+          <string>N/A</string>
+         </property>
+        </item>
        </widget>
       </item>
      </layout>

@@ -2,6 +2,7 @@ import yaml
 import sys
 import os
 import time
+import string
 import serial, serial.tools.list_ports, serial.serialutil
 
 from PySide2.QtGui import QPixmap, QImage, QIcon
@@ -28,11 +29,29 @@ class AppWindow(QMainWindow):
         scrollBar.setStyleSheet("background-color: rgb(240, 240, 240);\n"
 "color: rgb(12, 12, 12);")
         self.on_refreshBtn_clicked()
+        self.ui.outputTextBrowser.installEventFilter(self)
 
     def closeEvent(self, event):
         self.on_connectBtn_clicked(force_off=True)
         self.save_setting()
         event.accept()
+
+    
+    def eventFilter(self, source, event):
+        if event.type() == QEvent.KeyPress and source is self.ui.outputTextBrowser:
+            key = event.key()
+            if self.ser != None and (key == Qt.Key_Enter or key == Qt.Key_Return):
+                self.on_sendBtn_clicked()
+            else:
+                if event.key() == Qt.Key_Backspace:
+                    txt = self.ui.inputLineEdit.text()[:-1]
+                elif event.text() in string.printable:
+                    txt = self.ui.inputLineEdit.text() + event.text()
+                else:
+                    txt = self.ui.inputLineEdit.text()
+                self.ui.inputLineEdit.setText(txt)
+            # print('key press:', (event.key(), event.text()))
+        return super(AppWindow, self).eventFilter(source, event)
 
     def load_setting(self):
         self.setting = yaml.load(default_setting, Loader=yaml.SafeLoader)
@@ -167,12 +186,15 @@ class AppWindow(QMainWindow):
 
     @Slot()
     def on_sendBtn_clicked(self):
-        eol = '\n'
-        if self.ui.EOLComboBox.currentText() == 'CR;LF':
+        eol = ''
+        if self.ui.EOLComboBox.currentText() == 'LF':
+            eol = '\n'
+        elif self.ui.EOLComboBox.currentText() == 'CR;LF':
             eol = '\r\n'
         elif self.ui.EOLComboBox.currentText() == 'CR':
             eol = '\r'
-        text = self.ui.inputLineEdit.text() + eol
+        text = self.ui.inputLineEdit.text()
+        text = text + eol
         self.serial_write(text.encode('ascii'))
         self.ui.inputLineEdit.setText('')
 

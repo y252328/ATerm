@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'Ui_MainWindow.ui',
 # licensing of 'Ui_MainWindow.ui' applies.
 #
-# Created: Thu Jan  2 19:56:33 2020
+# Created: Fri Jan  3 17:17:20 2020
 #      by: pyside2-uic  running on PySide2 5.13.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -93,6 +93,7 @@ class Ui_MainWindow(object):
         self.EOLComboBox.addItem("")
         self.EOLComboBox.addItem("")
         self.EOLComboBox.addItem("")
+        self.EOLComboBox.addItem("")
         self.horizontalLayout_2.addWidget(self.EOLComboBox)
         self.verticalLayout.addLayout(self.horizontalLayout_2)
         MainWindow.setCentralWidget(self.centralwidget)
@@ -123,4 +124,5 @@ class Ui_MainWindow(object):
         self.EOLComboBox.setItemText(0, QtWidgets.QApplication.translate("MainWindow", "LF", None, -1))
         self.EOLComboBox.setItemText(1, QtWidgets.QApplication.translate("MainWindow", "CR;LF", None, -1))
         self.EOLComboBox.setItemText(2, QtWidgets.QApplication.translate("MainWindow", "CR", None, -1))
+        self.EOLComboBox.setItemText(3, QtWidgets.QApplication.translate("MainWindow", "N/A", None, -1))
 
