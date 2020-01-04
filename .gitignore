@@ -2,5 +2,6 @@
 __pycache__/
 layout/*.bat
 pyinstaller/
-setting.yaml
+!pyinstaller/make.bat
 bin/
+setting.yaml
