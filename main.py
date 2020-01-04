@@ -164,7 +164,7 @@ class AppWindow(QMainWindow):
             self.ui.portComboBox.setEnabled(True)
             self.ui.baudComboBox.setEnabled(True)
             self.ui.refreshBtn.setEnabled(True)
-            self.ser == None
+            self.ser = None
             self.ui.connectBtn.setText('Connect')
 
     @Slot()
