@@ -25,6 +25,7 @@ class AppWindow(QMainWindow):
         self.load_setting()
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.read_from_ser)
+        self.setWindowIcon(QIcon(r'layout/aterm_icon.ico'))
         scrollBar = self.ui.outputTextBrowser.verticalScrollBar()
         scrollBar.setStyleSheet("background-color: rgb(240, 240, 240);\n"
 "color: rgb(12, 12, 12);")
