@@ -18,7 +18,7 @@ The setting file is a YAML file and place in the directory of program. There are
 * __path__: a string. Default directory of open file dialog of sending file.
 * __custom_baud__: a list of integer. ATerm will add this list into the baud rate combo box.(1.3.0+)
 
-### example
+### Example
 ```yaml
 ---
 baud:
