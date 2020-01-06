@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'Ui_MainWindow.ui',
 # licensing of 'Ui_MainWindow.ui' applies.
 #
-# Created: Mon Jan  6 18:11:52 2020
+# Created: Mon Jan  6 19:56:45 2020
 #      by: pyside2-uic  running on PySide2 5.13.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -41,9 +41,8 @@ class Ui_MainWindow(object):
         self.label_2.setObjectName("label_2")
         self.horizontalLayout.addWidget(self.label_2)
         self.baudComboBox = QtWidgets.QComboBox(self.centralwidget)
+        self.baudComboBox.setSizeAdjustPolicy(QtWidgets.QComboBox.AdjustToContents)
         self.baudComboBox.setObjectName("baudComboBox")
-        self.baudComboBox.addItem("")
-        self.baudComboBox.addItem("")
         self.horizontalLayout.addWidget(self.baudComboBox)
         self.connectBtn = QtWidgets.QPushButton(self.centralwidget)
         self.connectBtn.setObjectName("connectBtn")
@@ -113,8 +112,6 @@ class Ui_MainWindow(object):
         self.label.setText(QtWidgets.QApplication.translate("MainWindow", "Port:", None, -1))
         self.refreshBtn.setText(QtWidgets.QApplication.translate("MainWindow", "Refresh", None, -1))
         self.label_2.setText(QtWidgets.QApplication.translate("MainWindow", "Baud rate:", None, -1))
-        self.baudComboBox.setItemText(0, QtWidgets.QApplication.translate("MainWindow", "9600", None, -1))
-        self.baudComboBox.setItemText(1, QtWidgets.QApplication.translate("MainWindow", "115200", None, -1))
         self.connectBtn.setText(QtWidgets.QApplication.translate("MainWindow", "Connect", None, -1))
         self.autoScrollCheckBox.setText(QtWidgets.QApplication.translate("MainWindow", "Auto scroll", None, -1))
         self.sendFileBtn.setText(QtWidgets.QApplication.translate("MainWindow", "Send file", None, -1))

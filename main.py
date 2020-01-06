@@ -6,14 +6,14 @@ import string
 import serial, serial.tools.list_ports, serial.serialutil
 
 from PySide2.QtGui import QPixmap, QImage, QIcon
-from PySide2.QtWidgets import QApplication, QMainWindow, QFileDialog, QSizePolicy, QMenu, QMessageBox, QFileDialog
+from PySide2.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QFileDialog, QLineEdit
 from PySide2.QtCore import Slot, Qt, QPoint, Signal, QEvent, QTimer
 from layout import Ui_MainWindow, icon
 
 default_setting = """---
 priority: []
-
 baud: {}
+custom_baud: []
 """
 
 class AppWindow(QMainWindow):
@@ -26,9 +26,15 @@ class AppWindow(QMainWindow):
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.read_from_ser)
         self.setWindowIcon(QIcon(r':icon.ico'))
+
         scrollBar = self.ui.outputTextBrowser.verticalScrollBar()
-        scrollBar.setStyleSheet("background-color: rgb(240, 240, 240);\n"
-"color: rgb(12, 12, 12);")
+        scrollBar.setStyleSheet("background-color: rgb(240, 240, 240);\n""color: rgb(12, 12, 12);")
+
+        buads = [9600, 115200] + self.setting['custom_baud']
+        buads = [str(b) for b in sorted(list(set(buads)))]
+        self.ui.baudComboBox.addItems(buads)
+        self.ui.baudComboBox.setLineEdit(QLineEdit())
+
         self.on_refreshBtn_clicked()
         self.ui.outputTextBrowser.installEventFilter(self)
 
@@ -134,10 +140,8 @@ class AppWindow(QMainWindow):
         port_name = self.ui.portComboBox.itemText(index)
         for k, v in self.setting['baud'].items():
             if k.lower() in port_name.lower():
-                if v == 9600:
-                    self.ui.baudComboBox.setCurrentIndex(0)
-                elif v == 115200:
-                    self.ui.baudComboBox.setCurrentIndex(1)
+                self.ui.baudComboBox.setEditText(str(v))
+                self.ui.baudComboBox.setCurrentIndex(0)
 
     @Slot()
     def on_connectBtn_clicked(self, force_off=False):

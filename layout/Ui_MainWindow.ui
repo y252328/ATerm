@@ -62,16 +62,9 @@
       </item>
       <item>
        <widget class="QComboBox" name="baudComboBox">
-        <item>
-         <property name="text">
-          <string>9600</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>115200</string>
-         </property>
-        </item>
+        <property name="sizeAdjustPolicy">
+         <enum>QComboBox::AdjustToContents</enum>
+        </property>
        </widget>
       </item>
       <item>
