@@ -6,7 +6,7 @@ ATerm not only can send/recive ascii text but also send file(binary).
 
 ## Setting
 This section will talk about how to config ATerm(e.g., priority of ports, default baud rate, etc.) through writing the setting file.
-The setting file is a YAML file and place in directory of program. There are following options in file.
+The setting file is a YAML file and place in the directory of program. There are following options in file.
 * priority: a list. ATerm will compare available com ports with this list and select the highest priority and available port on refresh bottom clicked.
 * baud: the key/value pairs. Key is the port name. Value is the baud rate.
 * path: a string. Default directory of open file dialog of sending file.
