@@ -16,6 +16,8 @@ baud: {}
 custom_baud: []
 """
 
+__version__ = '1.3.0'
+
 class AppWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -26,6 +28,7 @@ class AppWindow(QMainWindow):
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.read_from_ser)
         self.setWindowIcon(QIcon(r':icon.ico'))
+        self.setWindowTitle('ATerm '+__version__)
 
         scrollBar = self.ui.outputTextBrowser.verticalScrollBar()
         scrollBar.setStyleSheet("background-color: rgb(240, 240, 240);\n""color: rgb(12, 12, 12);")
