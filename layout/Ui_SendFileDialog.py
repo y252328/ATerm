@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'Ui_SendFileDialog.ui',
 # licensing of 'Ui_SendFileDialog.ui' applies.
 #
-# Created: Fri Jan 10 00:35:52 2020
+# Created: Fri Jan 10 18:53:03 2020
 #      by: pyside2-uic  running on PySide2 5.13.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -13,7 +13,7 @@ from PySide2 import QtCore, QtGui, QtWidgets
 class Ui_SendFileDialog(object):
     def setupUi(self, SendFileDialog):
         SendFileDialog.setObjectName("SendFileDialog")
-        SendFileDialog.resize(271, 123)
+        SendFileDialog.resize(271, 129)
         self.verticalLayout = QtWidgets.QVBoxLayout(SendFileDialog)
         self.verticalLayout.setObjectName("verticalLayout")
         self.formLayout = QtWidgets.QFormLayout()
@@ -45,8 +45,9 @@ class Ui_SendFileDialog(object):
         self.progressBar.setObjectName("progressBar")
         self.verticalLayout.addWidget(self.progressBar)
         self.buttonBox = QtWidgets.QDialogButtonBox(SendFileDialog)
+        self.buttonBox.setEnabled(False)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel)
+        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.NoButton)
         self.buttonBox.setObjectName("buttonBox")
         self.verticalLayout.addWidget(self.buttonBox)
 

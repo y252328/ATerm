@@ -18,7 +18,7 @@ baud: {}
 custom_baud: []
 """
 
-__version__ = '1.3.1'
+__version__ = '1.4.0'
 
 class AppWindow(QMainWindow):
     def __init__(self):

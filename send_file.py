@@ -58,7 +58,6 @@ class SendFileDialog(QDialog):
         
     @Slot(int)
     def on_serial_errorOccurred(self, error):
-        print('stop')
         self.thread.on_serial_errorOccurred()
         self.thread.wait()
         self.close()
