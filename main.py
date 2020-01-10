@@ -5,7 +5,7 @@ import time
 import string
 import serial.tools.list_ports, serial.serialutil
 
-from PySide2.QtGui import QPixmap, QImage, QIcon
+from PySide2.QtGui import QPixmap, QImage, QIcon, QTextCursor
 from PySide2.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QFileDialog, QLineEdit
 from PySide2.QtCore import Slot, Qt, QPoint, Signal, QEvent, QTimer
 from layout import Ui_MainWindow, icon
@@ -18,7 +18,7 @@ baud: {}
 custom_baud: []
 """
 
-__version__ = '1.3.0'
+__version__ = '1.3.1'
 
 class AppWindow(QMainWindow):
     def __init__(self):
@@ -83,11 +83,14 @@ class AppWindow(QMainWindow):
             self.append_term(text)
 
     def append_term(self, text):
-        text = self.ui.outputTextBrowser.toPlainText() + text
-        self.ui.outputTextBrowser.setText(text)
+        scrollBar = self.ui.outputTextBrowser.verticalScrollBar()
+        slider_pos = scrollBar.value()
+        self.ui.outputTextBrowser.moveCursor(QTextCursor.End)
+        self.ui.outputTextBrowser.insertPlainText(text)
         if self.ui.autoScrollCheckBox.isChecked():
-            scrollBar = self.ui.outputTextBrowser.verticalScrollBar()
             scrollBar.setValue(scrollBar.maximum())
+        else:
+            scrollBar.setValue(slider_pos)
 
     @Slot()
     def on_refreshBtn_clicked(self):
