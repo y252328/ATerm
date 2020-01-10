@@ -1,0 +1,107 @@
+import sys
+from PySide2.QtGui import QPixmap, QImage, QIcon, QTextCursor, QColor, QTextFormat, QFont, QPainter
+from PySide2.QtWidgets import QWidget, QPlainTextEdit, QApplication, QTextEdit
+from PySide2.QtCore import Slot, Qt, QPoint, Signal, QEvent, QTimer, QSize, QRect
+from layout import Ui_MainWindow, icon
+from send_file import SendFileDialog
+
+class LineNumberArea(QWidget):
+    def __init__(self, browser):
+        super(LineNumberArea, self).__init__(browser)
+        self.browser = browser
+
+    def sizeHint(self):
+        return QSize(self.browser.lineNumberAreaWidth(), 0)
+
+    def paintEvent(self, event):
+        self.browser.lineNumberAreaPaintEvent(event)
+
+
+class LinePlainTextEdit(QPlainTextEdit):
+    def __init__(self, parent=None):
+        super(LinePlainTextEdit, self).__init__(parent)
+        font = QFont()
+        font.setFamily("Consolas")
+        font.setPointSize(14)
+        self.setFont(font)
+        self.lineNumberArea = LineNumberArea(self)
+        self.blockCountChanged.connect(self.updateLineNumberAreaWidth)
+        self.updateRequest.connect(self.updateLineNumberArea)
+        self.cursorPositionChanged.connect(self.highlightCurrentLine)
+
+        self.updateLineNumberAreaWidth(0)
+        # self.highlightCurrentLine()
+
+    def lineNumberAreaPaintEvent(self, event):
+        painter = QPainter(self.lineNumberArea)
+        painter.fillRect(event.rect(), Qt.lightGray)
+        block = self.firstVisibleBlock()
+        blockNumber = block.blockNumber()
+        top = round(self.blockBoundingGeometry(block).translated(self.contentOffset()).top())
+        bottom = top + round(self.blockBoundingRect(block).height())
+        while block.isValid() and (top <= event.rect().bottom()):
+            if block.isVisible() and (bottom >= event.rect().top()):
+                number = str(blockNumber + 1)
+                painter.setPen(Qt.black)
+                painter.drawText(0, top, self.lineNumberArea.width(), self.fontMetrics().height(),
+                                Qt.AlignRight, number)
+
+            block = block.next()
+            top = bottom
+            bottom = top + round(self.blockBoundingRect(block).height())
+            blockNumber += 1
+
+    def lineNumberAreaWidth(self):
+        digits = 1
+        max_ = max(1, self.blockCount())
+        while max_ >= 10 :
+            max_ /= 10
+            digits += 1
+
+        space = 3 + self.fontMetrics().horizontalAdvance(ord('9')) * digits
+        return space
+
+    def resizeEvent(self, event):
+        super(LinePlainTextEdit, self).resizeEvent(event)
+
+        cr = self.contentsRect()
+        self.lineNumberArea.setGeometry(QRect(cr.left(), cr.top(), self.lineNumberAreaWidth(), cr.height()))
+
+    def updateLineNumberAreaWidth(self, newBlockCount):
+        self.setViewportMargins(self.lineNumberAreaWidth(), 0, 0, 0)
+
+    def highlightCurrentLine(self):
+        extraSelections = list()
+
+        if not self.isReadOnly() :
+            selection = QTextEdit.ExtraSelection()
+
+            lineColor = QColor(Qt.yellow).lighter(160)
+
+            selection.format.setBackground(lineColor)
+            selection.format.setProperty(QTextFormat.FullWidthSelection, True)
+            selection.cursor = self.textCursor()
+            selection.cursor.clearSelection()
+            extraSelections.append(selection)
+        
+        self.setExtraSelections(extraSelections)
+
+    def updateLineNumberArea(self, rect, dy):
+        if dy:
+            self.lineNumberArea.scroll(0, dy)
+        else:
+            self.lineNumberArea.update(0, rect.y(), self.lineNumberArea.width(), rect.height())
+
+        if rect.contains(self.viewport().rect()):
+            self.updateLineNumberAreaWidth(0)
+    
+
+
+def main():
+    app = QApplication(sys.argv)
+    w = LinePlainTextEdit()
+    w.show()
+    sys.exit(app.exec_())
+
+if __name__ == "__main__":
+    main()

@@ -10,6 +10,7 @@ from PySide2.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBo
 from PySide2.QtCore import Slot, Qt, QPoint, Signal, QEvent, QTimer
 from layout import Ui_MainWindow, icon
 from send_file import SendFileDialog
+from edit import LinePlainTextEdit
 
 import serial_port
 default_setting = """---
@@ -25,6 +26,13 @@ class AppWindow(QMainWindow):
         super().__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+        linePlainTextEdit = LinePlainTextEdit(self)
+        outputTextBrowser = self.ui.outputTextBrowser
+        self.ui.verticalLayout.replaceWidget(outputTextBrowser, linePlainTextEdit)
+        self.ui.outputTextBrowser = linePlainTextEdit
+        self.ui.outputTextBrowser.setReadOnly(True)
+        outputTextBrowser.deleteLater()
+
         self.ser = serial_port.QPySerial()
         self.ser.errorOccurred.connect(self.on_serial_errorOccurred)
         self.load_setting()
@@ -35,6 +43,7 @@ class AppWindow(QMainWindow):
 
         scrollBar = self.ui.outputTextBrowser.verticalScrollBar()
         scrollBar.setStyleSheet("background-color: rgb(240, 240, 240);\n""color: rgb(12, 12, 12);")
+        self.ui.outputTextBrowser.installEventFilter(self)
 
         buads = [9600, 115200] + self.setting['custom_baud']
         buads = [str(b) for b in sorted(list(set(buads)))]
@@ -42,7 +51,6 @@ class AppWindow(QMainWindow):
         self.ui.baudComboBox.setLineEdit(QLineEdit())
 
         self.on_refreshBtn_clicked()
-        self.ui.outputTextBrowser.installEventFilter(self)
 
     def closeEvent(self, event):
         self.on_connectBtn_clicked(force_off=True)

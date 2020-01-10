@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'Ui_SendFileDialog.ui',
 # licensing of 'Ui_SendFileDialog.ui' applies.
 #
-# Created: Fri Jan 10 18:53:03 2020
+# Created: Fri Jan 10 21:11:54 2020
 #      by: pyside2-uic  running on PySide2 5.13.2
 #
 # WARNING! All changes made in this file will be lost!
