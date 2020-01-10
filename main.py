@@ -3,13 +3,15 @@ import sys
 import os
 import time
 import string
-import serial, serial.tools.list_ports, serial.serialutil
+import serial.tools.list_ports, serial.serialutil
 
 from PySide2.QtGui import QPixmap, QImage, QIcon
 from PySide2.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QFileDialog, QLineEdit
 from PySide2.QtCore import Slot, Qt, QPoint, Signal, QEvent, QTimer
 from layout import Ui_MainWindow, icon
+from send_file import SendFileDialog
 
+import serial_port
 default_setting = """---
 priority: []
 baud: {}
@@ -23,7 +25,8 @@ class AppWindow(QMainWindow):
         super().__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        self.ser = None
+        self.ser = serial_port.QPySerial()
+        self.ser.errorOccurred.connect(self.on_serial_errorOccurred)
         self.load_setting()
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.read_from_ser)
@@ -50,7 +53,7 @@ class AppWindow(QMainWindow):
     def eventFilter(self, source, event):
         if event.type() == QEvent.KeyPress and source is self.ui.outputTextBrowser:
             key = event.key()
-            if self.ser != None and (key == Qt.Key_Enter or key == Qt.Key_Return):
+            if self.ser.is_open() and (key == Qt.Key_Enter or key == Qt.Key_Return):
                 self.on_sendBtn_clicked()
             else:
                 if event.key() == Qt.Key_Backspace:
@@ -75,8 +78,8 @@ class AppWindow(QMainWindow):
             yaml.dump(self.setting, f, encoding='utf-8')
 
     def read_from_ser(self):
-        if self.serial_in_waiting() > 0:
-            text = self.serial_read(self.serial_in_waiting()).decode('ascii')
+        if self.ser.in_waiting() > 0:
+            text = self.ser.read(self.ser.in_waiting()).decode('ascii')
             self.append_term(text)
 
     def append_term(self, text):
@@ -85,43 +88,6 @@ class AppWindow(QMainWindow):
         if self.ui.autoScrollCheckBox.isChecked():
             scrollBar = self.ui.outputTextBrowser.verticalScrollBar()
             scrollBar.setValue(scrollBar.maximum())
-
-    def serial_in_waiting(self):
-        if self.ser != None:
-            try:
-                return self.ser.in_waiting
-            except serial.serialutil.SerialException:
-                self.on_connectBtn_clicked(True)
-        return 0
-
-    def serial_out_waiting(self):
-        if self.ser != None:
-            try:
-                return self.ser.out_waiting
-            except serial.serialutil.SerialException:
-                self.on_connectBtn_clicked(True)
-        return 0
-
-    def serial_read(self, n):
-        if self.ser != None:
-            try:
-                return self.ser.read(n)
-            except serial.serialutil.SerialException:
-                self.on_connectBtn_clicked(True)
-        return bytes()
-
-    def serial_write(self, data, timeout=None):
-        if self.ser != None:
-            try:
-                if timeout != None: 
-                    self.ser.write_timeout = timeout
-                n = self.ser.write(data)
-                if timeout != None: 
-                    self.ser.write_timeout = None
-                return n
-            except serial.serialutil.SerialException:
-                self.on_connectBtn_clicked(force_off=True)
-        return 0
 
     @Slot()
     def on_refreshBtn_clicked(self):
@@ -152,7 +118,7 @@ class AppWindow(QMainWindow):
             dev = self.ui.portComboBox.currentText().split('-')[0].strip()
             baud_rate = int(self.ui.baudComboBox.currentText())
             if dev == '': return
-            self.ser = serial.Serial(dev, baud_rate)
+            self.ser.open(dev, baud_rate)
             self.ui.connectBtn.setText('Disconnect')
             self.timer.start(200)
             self.ui.inputLineEdit.returnPressed.connect(self.on_sendBtn_clicked)
@@ -163,7 +129,7 @@ class AppWindow(QMainWindow):
             self.ui.refreshBtn.setEnabled(False)
         else:
             self.timer.stop()
-            if self.ser != None:
+            if not self.ser.is_open():
                 self.ser.close()
             try: self.ui.inputLineEdit.returnPressed.disconnect()
             except: pass
@@ -172,7 +138,6 @@ class AppWindow(QMainWindow):
             self.ui.portComboBox.setEnabled(True)
             self.ui.baudComboBox.setEnabled(True)
             self.ui.refreshBtn.setEnabled(True)
-            self.ser = None
             self.ui.connectBtn.setText('Connect')
 
     @Slot()
@@ -186,11 +151,13 @@ class AppWindow(QMainWindow):
         fileName = QFileDialog.getOpenFileName(parent=self, caption="Choose file", dir=path)[0]
         if os.path.isfile(fileName):
             self.setting['path'] = os.path.dirname(fileName)
-            with open(fileName, 'rb') as f:
-                self.serial_write(f.read(), 0)
-            while self.serial_out_waiting() > 0:
-                print(self.serial_out_waiting())
-                time.sleep(0.2)
+            dialog = SendFileDialog(fileName, self.ser, self)
+            dialog.exec_()
+            # with open(fileName, 'rb') as f:
+            #     self.ser.write(f.read(), 0)
+            # while self.ser.out_waiting() > 0:
+            #     print(self.ser.out_waiting())
+            #     time.sleep(0.2)
 
     @Slot()
     def on_sendBtn_clicked(self):
@@ -203,8 +170,13 @@ class AppWindow(QMainWindow):
             eol = '\r'
         text = self.ui.inputLineEdit.text()
         text = text + eol
-        self.serial_write(text.encode('ascii'))
+        self.ser.write(text.encode('ascii'))
         self.ui.inputLineEdit.setText('')
+
+    @Slot(int)
+    def on_serial_errorOccurred(self, error):
+        if serial_port.CLOSED != error:
+            self.on_connectBtn_clicked(True)
 
     @Slot()
     def on_clearOutputBtn_clicked(self):
