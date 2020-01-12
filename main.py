@@ -111,6 +111,12 @@ class AppWindow(QMainWindow):
         else:
             scrollBar.setValue(slider_pos)
 
+    @Slot(int)
+    def on_autoScrollCheckBox_stateChanged(self, state):
+        if (state == Qt.Checked):
+            scrollBar = self.ui.outputTextBrowser.verticalScrollBar()
+            scrollBar.setValue(scrollBar.maximum())
+
     @Slot()
     def on_refreshBtn_clicked(self):
         self.on_connectBtn_clicked(force_off=True)
