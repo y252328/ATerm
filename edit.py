@@ -20,10 +20,6 @@ class LineNumberArea(QWidget):
 class LinePlainTextEdit(QPlainTextEdit):
     def __init__(self, parent=None):
         super(LinePlainTextEdit, self).__init__(parent)
-        font = QFont()
-        font.setFamily("Consolas")
-        font.setPointSize(14)
-        self.setFont(font)
         self.lineNumberArea = LineNumberArea(self)
         self.blockCountChanged.connect(self.updateLineNumberAreaWidth)
         self.updateRequest.connect(self.updateLineNumberArea)
@@ -32,6 +28,10 @@ class LinePlainTextEdit(QPlainTextEdit):
         self.updateLineNumberAreaWidth(0)
         # self.highlightCurrentLine()
 
+    def setFont(self, font):
+        super(LinePlainTextEdit, self).setFont(font)
+        self.lineNumberArea.setFont(font)
+    
     def lineNumberAreaPaintEvent(self, event):
         painter = QPainter(self.lineNumberArea)
         painter.fillRect(event.rect(), Qt.lightGray)

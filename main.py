@@ -5,7 +5,7 @@ import time
 import string
 import serial.tools.list_ports, serial.serialutil
 
-from PySide2.QtGui import QPixmap, QImage, QIcon, QTextCursor
+from PySide2.QtGui import QPixmap, QImage, QIcon, QTextCursor, QFont
 from PySide2.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QFileDialog, QLineEdit
 from PySide2.QtCore import Slot, Qt, QPoint, Signal, QEvent, QTimer
 from layout import Ui_MainWindow, icon
@@ -26,12 +26,26 @@ class AppWindow(QMainWindow):
         super().__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+
+        # ====================
+        # == output browser ==
+        # ====================
         linePlainTextEdit = LinePlainTextEdit(self)
         outputTextBrowser = self.ui.outputTextBrowser
         self.ui.verticalLayout.replaceWidget(outputTextBrowser, linePlainTextEdit)
         self.ui.outputTextBrowser = linePlainTextEdit
         self.ui.outputTextBrowser.setReadOnly(True)
         outputTextBrowser.deleteLater()
+
+        scrollBar = self.ui.outputTextBrowser.verticalScrollBar()
+        scrollBar.setStyleSheet("background-color: rgb(240, 240, 240);\n""color: rgb(12, 12, 12);")
+        self.ui.outputTextBrowser.setStyleSheet("background-color: rgb(30, 30, 30);\n""color: rgb(236, 236, 236);")
+        self.ui.outputTextBrowser.installEventFilter(self)
+        font = QFont()
+        font.setFamily("Consolas")
+        font.setPointSize(14)
+        self.ui.outputTextBrowser.setFont(font)
+        # =============================
 
         self.ser = serial_port.QPySerial()
         self.ser.errorOccurred.connect(self.on_serial_errorOccurred)
@@ -41,9 +55,6 @@ class AppWindow(QMainWindow):
         self.setWindowIcon(QIcon(r':icon.ico'))
         self.setWindowTitle('ATerm '+__version__)
 
-        scrollBar = self.ui.outputTextBrowser.verticalScrollBar()
-        scrollBar.setStyleSheet("background-color: rgb(240, 240, 240);\n""color: rgb(12, 12, 12);")
-        self.ui.outputTextBrowser.installEventFilter(self)
 
         buads = [9600, 115200] + self.setting['custom_baud']
         buads = [str(b) for b in sorted(list(set(buads)))]
