@@ -34,16 +34,18 @@ class LinePlainTextEdit(QPlainTextEdit):
     
     def lineNumberAreaPaintEvent(self, event):
         painter = QPainter(self.lineNumberArea)
-        painter.fillRect(event.rect(), Qt.lightGray)
+        painter.fillRect(event.rect(), QColor(45, 45, 45))
         block = self.firstVisibleBlock()
         blockNumber = block.blockNumber()
         top = round(self.blockBoundingGeometry(block).translated(self.contentOffset()).top())
         bottom = top + round(self.blockBoundingRect(block).height())
+        a = self.blockCount()
         while block.isValid() and (top <= event.rect().bottom()):
             if block.isVisible() and (bottom >= event.rect().top()):
                 number = str(blockNumber + 1)
-                painter.setPen(Qt.black)
-                painter.drawText(0, top, self.lineNumberArea.width(), self.fontMetrics().height(),
+                # painter.setPen(Qt.black)
+                painter.setPen(QColor(145, 145, 145))
+                painter.drawText(-3, top, self.lineNumberArea.width(), self.fontMetrics().height(),
                                 Qt.AlignRight, number)
 
             block = block.next()
@@ -58,7 +60,7 @@ class LinePlainTextEdit(QPlainTextEdit):
             max_ /= 10
             digits += 1
 
-        space = 3 + self.fontMetrics().horizontalAdvance(ord('9')) * digits
+        space = 10 + self.fontMetrics().horizontalAdvance(ord('9')) * digits
         return space
 
     def resizeEvent(self, event):
