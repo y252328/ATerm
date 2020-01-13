@@ -33,7 +33,7 @@ class SendFileThread(QThread):
 class SendFileDialog(QDialog):
     def __init__(self, file_path, serial, parent=None):
         super(SendFileDialog, self).__init__(parent=parent)
-        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint & ~Qt.WindowCloseButtonHint)
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         self.ser = serial
         self.ser.errorOccurred.connect(self.on_serial_errorOccurred)
         self.file_path = file_path
@@ -47,6 +47,10 @@ class SendFileDialog(QDialog):
         self.thread = SendFileThread(self.file_path, self.ser)
         self.thread.update_remain.connect(self.update_remain)
         self.thread.start()
+
+    def closeEvent(self, event):
+        self.thread.on_serial_errorOccurred()
+        event.accept()
 
     @Slot(int)
     def update_remain(self, remain):
