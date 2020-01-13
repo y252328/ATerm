@@ -208,7 +208,7 @@ class AppWindow(QMainWindow):
 
     @Slot()
     def on_clearOutputBtn_clicked(self):
-        self.ui.outputTextBrowser.setText('')
+        self.ui.outputTextBrowser.clear()
             
 
 def main():

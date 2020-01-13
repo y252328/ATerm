@@ -2,7 +2,10 @@
 This project, ATerm, is a simple serial terminal implemented in Python and Qt. \
 ATerm not only can send/receive ascii text but also send file(binary).
 
-![](https://i.imgur.com/iVVejkq.png)
+![](https://i.imgur.com/2acN4NY.png)
+
+## Looking for the C++ version ATerm
+For C++ version, click [here](https://github.com/y252328/ATerm-CPP)
 
 ## Requirement
 * python==3.6
