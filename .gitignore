@@ -5,3 +5,5 @@ pyinstaller/
 !pyinstaller/make.bat
 bin/
 setting.yaml
+nuitka
+start.bat
