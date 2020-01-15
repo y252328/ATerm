@@ -157,7 +157,7 @@ class AppWindow(QMainWindow):
             self.ui.refreshBtn.setEnabled(False)
         else:
             self.timer.stop()
-            if not self.ser.is_open():
+            if self.ser.is_open():
                 self.ser.close()
             try: self.ui.inputLineEdit.returnPressed.disconnect()
             except: pass
