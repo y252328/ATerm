@@ -6,7 +6,7 @@ import string
 import serial.tools.list_ports, serial.serialutil
 
 from PySide2.QtGui import QPixmap, QImage, QIcon, QTextCursor, QFont
-from PySide2.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QFileDialog, QLineEdit
+from PySide2.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QFileDialog, QLineEdit, QPlainTextEdit
 from PySide2.QtCore import Slot, Qt, QPoint, Signal, QEvent, QTimer
 from layout import Ui_MainWindow, icon
 from send_file import SendFileDialog
@@ -19,7 +19,7 @@ baud: {}
 custom_baud: []
 """
 
-__version__ = '1.4.2'
+__version__ = '1.4.3'
 
 class AppWindow(QMainWindow):
     def __init__(self):
@@ -37,7 +37,10 @@ class AppWindow(QMainWindow):
         self.ui.outputTextBrowser.setReadOnly(True)
         outputTextBrowser.deleteLater()
 
+        self.ui.outputTextBrowser.setLineWrapMode(QPlainTextEdit.NoWrap)
         scrollBar = self.ui.outputTextBrowser.verticalScrollBar()
+        scrollBar.setStyleSheet("background-color: rgb(240, 240, 240);\n""color: rgb(12, 12, 12);")
+        scrollBar = self.ui.outputTextBrowser.horizontalScrollBar()
         scrollBar.setStyleSheet("background-color: rgb(240, 240, 240);\n""color: rgb(12, 12, 12);")
         self.ui.outputTextBrowser.setStyleSheet("background-color: rgb(30, 30, 30);\n""color: rgb(236, 236, 236);")
         self.ui.outputTextBrowser.installEventFilter(self)
