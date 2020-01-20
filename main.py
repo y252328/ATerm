@@ -19,7 +19,7 @@ baud: {}
 custom_baud: []
 """
 
-__version__ = '1.4.1'
+__version__ = '1.4.2'
 
 class AppWindow(QMainWindow):
     def __init__(self):
@@ -137,8 +137,8 @@ class AppWindow(QMainWindow):
         port_name = self.ui.portComboBox.itemText(index)
         for k, v in self.setting['baud'].items():
             if k.lower() in port_name.lower():
-                self.ui.baudComboBox.setEditText(str(v))
                 self.ui.baudComboBox.setCurrentIndex(0)
+                self.ui.baudComboBox.setEditText(str(v))
 
     @Slot()
     def on_connectBtn_clicked(self, force_off=False):
