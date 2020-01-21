@@ -18,6 +18,9 @@ priority: []
 baud: {}
 custom_baud: []
 """
+# To-Do:
+#   prompt when connection failed
+#   fix file sending progress bar
 
 __version__ = '1.4.3'
 
