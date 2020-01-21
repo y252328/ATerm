@@ -54,9 +54,9 @@ class SendFileDialog(QDialog):
 
     @Slot(int)
     def update_remain(self, remain):
-        self.remain = remain
-        self.ui.sizeLabel.setText("{:.2f} / {:.2f} KB".format((self.size-self.remain)/1024, self.size/1024))
-        self.ui.progressBar.setValue(((self.size-self.remain)/self.size)*100)
+        # self.remain = remain
+        # self.ui.sizeLabel.setText("{:.2f} / {:.2f} KB".format((self.size-self.remain)/1024, self.size/1024))
+        # self.ui.progressBar.setValue(((self.size-self.remain)/self.size)*100)
         if remain == 0:
             self.close()
         
