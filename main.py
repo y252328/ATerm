@@ -19,10 +19,9 @@ baud: {}
 custom_baud: []
 """
 # To-Do:
-#   prompt when connection failed
 #   fix file sending progress bar
 
-__version__ = '1.4.3'
+__version__ = '1.4.4'
 
 class AppWindow(QMainWindow):
     def __init__(self):
@@ -152,7 +151,12 @@ class AppWindow(QMainWindow):
             dev = self.ui.portComboBox.currentText().split('-')[0].strip()
             baud_rate = int(self.ui.baudComboBox.currentText())
             if dev == '': return
-            self.ser.open(dev, baud_rate)
+            try:
+                self.ser.open(dev, baud_rate)
+            except serial.serialutil.SerialException as e:
+                msg = e.args[0][0].upper() + e.args[0][1:]
+                QMessageBox.critical(self,"Serial Error", msg)
+                return
             self.ui.connectBtn.setText('Disconnect')
             self.timer.start(200)
             self.ui.inputLineEdit.returnPressed.connect(self.on_sendBtn_clicked)
