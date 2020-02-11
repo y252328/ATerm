@@ -21,7 +21,7 @@ custom_baud: []
 # To-Do:
 #   fix file sending progress bar
 
-__version__ = '1.4.4'
+__version__ = '1.4.5'
 
 class AppWindow(QMainWindow):
     def __init__(self):
@@ -165,6 +165,7 @@ class AppWindow(QMainWindow):
             self.ui.portComboBox.setEnabled(False)
             self.ui.baudComboBox.setEnabled(False)
             self.ui.refreshBtn.setEnabled(False)
+            self.setWindowTitle(self.ui.portComboBox.currentText().replace(' - ', ': ') + ' - ' + 'ATerm '+__version__ )
         else:
             self.timer.stop()
             if self.ser.is_open():
@@ -177,6 +178,7 @@ class AppWindow(QMainWindow):
             self.ui.baudComboBox.setEnabled(True)
             self.ui.refreshBtn.setEnabled(True)
             self.ui.connectBtn.setText('Connect')
+            self.setWindowTitle('ATerm '+__version__ )
 
     @Slot()
     def on_sendFileBtn_clicked(self):
