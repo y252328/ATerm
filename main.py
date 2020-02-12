@@ -103,7 +103,15 @@ class AppWindow(QMainWindow):
 
     def read_from_ser(self):
         if self.ser.in_waiting() > 0:
-            text = self.ser.read(self.ser.in_waiting()).decode('ascii')
+            text = ''
+            for char in self.ser.read(self.ser.in_waiting()):
+                if char < 127:
+                    text += chr(char)
+                else:
+                    print('unknown char: ', hex(char))
+                    text += '□'
+            # text = self.ser.read(self.ser.in_waiting()).decode('utf-8')
+
             self.append_term(text)
 
     def append_term(self, text):
