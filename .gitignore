@@ -7,3 +7,4 @@ bin/
 setting.yaml
 nuitka
 start.bat
+log/

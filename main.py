@@ -5,6 +5,8 @@ import time
 import string
 import serial.tools.list_ports, serial.serialutil
 
+from datetime import datetime
+
 from PySide2.QtGui import QPixmap, QImage, QIcon, QTextCursor, QFont
 from PySide2.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox, QFileDialog, QLineEdit, QPlainTextEdit
 from PySide2.QtCore import Slot, Qt, QPoint, Signal, QEvent, QTimer
@@ -28,7 +30,8 @@ class AppWindow(QMainWindow):
         super().__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-
+        if not os.path.isdir('log'):
+            os.mkdir('log')
         # ====================
         # == output browser ==
         # ====================
@@ -119,6 +122,7 @@ class AppWindow(QMainWindow):
         slider_pos = scrollBar.value()
         self.ui.outputTextBrowser.moveCursor(QTextCursor.End)
         self.ui.outputTextBrowser.insertPlainText(text)
+        self.file.write(text)
         if self.ui.autoScrollCheckBox.isChecked():
             scrollBar.setValue(scrollBar.maximum())
         else:
@@ -174,6 +178,8 @@ class AppWindow(QMainWindow):
             self.ui.baudComboBox.setEnabled(False)
             self.ui.refreshBtn.setEnabled(False)
             self.setWindowTitle(self.ui.portComboBox.currentText().replace(' - ', ': ') + ' - ' + 'ATerm '+__version__ )
+            self.file = open('log/{}.log'.format(self.ui.portComboBox.currentText()), 'a', encoding='utf-8')
+            self.file.write('\n\n========== Connect at {}==========\n'.format(datetime.now()))
         else:
             self.timer.stop()
             if self.ser.is_open():
@@ -187,6 +193,10 @@ class AppWindow(QMainWindow):
             self.ui.refreshBtn.setEnabled(True)
             self.ui.connectBtn.setText('Connect')
             self.setWindowTitle('ATerm '+__version__ )
+            try: 
+                self.file.write('\n========== Disconnect at {}==========\n'.format(datetime.now()))
+                self.file.close()
+            except: pass
 
     @Slot()
     def on_sendFileBtn_clicked(self):
