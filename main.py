@@ -23,7 +23,7 @@ custom_baud: []
 # To-Do:
 #   fix file sending progress bar
 
-__version__ = '1.4.5'
+__version__ = '1.5.0'
 
 class AppWindow(QMainWindow):
     def __init__(self):
@@ -111,28 +111,34 @@ class AppWindow(QMainWindow):
                 if char < 127:
                     text += chr(char)
                 else:
-                    print('unknown char: ', hex(char))
+                    print('unknown char:', hex(char))
                     text += '□'
             # text = self.ser.read(self.ser.in_waiting()).decode('utf-8')
 
             self.append_term(text)
 
     def append_term(self, text):
-        scrollBar = self.ui.outputTextBrowser.verticalScrollBar()
-        slider_pos = scrollBar.value()
+        vScrollBar = self.ui.outputTextBrowser.verticalScrollBar()
+        hScrollBar = self.ui.outputTextBrowser.horizontalScrollBar()
+        v_slider_pos = vScrollBar.value()
+        h_slider_pos = hScrollBar.value()
         self.ui.outputTextBrowser.moveCursor(QTextCursor.End)
         self.ui.outputTextBrowser.insertPlainText(text)
         self.file.write(text)
         if self.ui.autoScrollCheckBox.isChecked():
-            scrollBar.setValue(scrollBar.maximum())
+            vScrollBar.setValue(vScrollBar.maximum())
+            hScrollBar.setValue(hScrollBar.minimum())
         else:
-            scrollBar.setValue(slider_pos)
+            vScrollBar.setValue(v_slider_pos)
+            hScrollBar.setValue(h_slider_pos)
 
     @Slot(int)
     def on_autoScrollCheckBox_stateChanged(self, state):
         if (state == Qt.Checked):
-            scrollBar = self.ui.outputTextBrowser.verticalScrollBar()
-            scrollBar.setValue(scrollBar.maximum())
+            vScrollBar = self.ui.outputTextBrowser.verticalScrollBar()
+            hScrollBar = self.ui.outputTextBrowser.horizontalScrollBar()
+            vScrollBar.setValue(vScrollBar.maximum())
+            hScrollBar.setValue(hScrollBar.minimum())
 
     @Slot()
     def on_refreshBtn_clicked(self):
