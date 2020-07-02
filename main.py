@@ -125,6 +125,7 @@ class AppWindow(QMainWindow):
         self.ui.outputTextBrowser.moveCursor(QTextCursor.End)
         self.ui.outputTextBrowser.insertPlainText(text)
         self.file.write(text)
+        self.file.flush()
         if self.ui.autoScrollCheckBox.isChecked():
             vScrollBar.setValue(vScrollBar.maximum())
             hScrollBar.setValue(hScrollBar.minimum())
@@ -184,8 +185,9 @@ class AppWindow(QMainWindow):
             self.ui.baudComboBox.setEnabled(False)
             self.ui.refreshBtn.setEnabled(False)
             self.setWindowTitle(self.ui.portComboBox.currentText().replace(' - ', ': ') + ' - ' + 'ATerm '+__version__ )
-            self.file = open('log/{}.log'.format(self.ui.portComboBox.currentText()), 'a', encoding='utf-8')
+            self.file = open('log/{}.log'.format(self.ui.portComboBox.currentText().replace('/', '|')), 'a', encoding='utf-8')
             self.file.write('\n\n========== Connect at {}==========\n'.format(datetime.now()))
+            self.file.flush()
         else:
             self.timer.stop()
             if self.ser.is_open():
